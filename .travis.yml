@@ -6,4 +6,3 @@ os:
     - windows
 script:
     - cargo build -v
-    - cargo test -v
