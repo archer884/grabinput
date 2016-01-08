@@ -6,5 +6,5 @@ exclude = ["examples/*"]
 description = "Unixy lib for reading from a file or from stdin"
 repository = "https://github.com/archer884/grabinput.git"
 readme = "README.md"
-license = "MIT"
+license = "MIT/Apache-2.0"
 keywords = ["stdin", "file", "read", "input", "simple"]
