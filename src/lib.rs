@@ -1,50 +1,61 @@
-use std::fs::File;
-use std::io;
-use std::io::{BufRead, BufReader, Read, Stdin};
+//! This library really is intended to be dirt simple. It doesn't do much--just 
+//! allows you to skip some typing when you want to read something. Like, say 
+//! you want to write a program to add up all the integers in a file...
+//! 
+//! ```rust
+//! extern crate grabinput;
+//! 
+//! let sum: i32 = grabinput::from_args().with_fallback()
+//!     .filter_map(|n| n.trim().parse::<i32>().ok())
+//!     .sum();
+//! ```
+//! 
+//! That's your whole program now. I thought about having the library trim 
+//! newlines from the end of each line, because .NET's similar library functions 
+//! will do that, but I guess I just figured it was faster to let the user 
+//! decide--no reason to make them pay for the work if they don't care if it's 
+//! done or not, right? Anyway...
+
+mod file;
+mod read;
+mod stdin;
+
+pub use file::*;
+pub use stdin::FromStdin;
 use std::path::Path;
 
-pub enum InputSource {
-    FromFile(BufReader<File>),
-    FromStdin(BufReader<Stdin>),
+/// Creates an input handle based on `std::env::args().nth(1)`.
+///
+/// The assumption here is that your program is executed as `<program> <file>`,
+/// in which case the 1st (not 0th) argument names the file to be read. See 
+/// [`from_path`] for support for custom paths.
+///
+/// [`from_path`]: fn.from_path.html
+pub fn from_args() -> FromFile {
+    std::env::args()
+        .nth(1)
+        .map(|path| FromFile::from_path(path))
+        .unwrap_or_else(|| FromFile::new())
 }
 
-impl Iterator for InputSource {
-    type Item = String;
+/// Creates an input handle based on the provided path.
+///
+/// To create an input handle based on an optional path, see [`from_optional_path`].
+///
+/// [`from_optional_path`]: fn.from_optional_path.html
+pub fn from_path<T: AsRef<Path>>(path: T) -> FromFile {
+    FromFile::from_path(path)
+}
 
-    fn next(&mut self) -> Option<String> {
-        match self {
-            &mut InputSource::FromFile(ref mut file) => next_line(file),
-            &mut InputSource::FromStdin(ref mut stdin) => next_line(stdin),
-        }
+/// Creates an input handle based on an optional path.
+pub fn from_optional_path<T: AsRef<Path>>(path: Option<T>) -> FromFile {
+    match path {
+        None => FromFile::default(),
+        Some(ref path) => FromFile::from_path(path),
     }
 }
 
-pub fn by_lines<P: AsRef<Path>>(optional_path: Option<P>) -> InputSource {
-    match optional_path.and_then(|path| File::open(&path).ok()) {
-        None => InputSource::FromStdin(BufReader::new(io::stdin())),
-        Some(file) => InputSource::FromFile(BufReader::new(file)),
-    }
-}
-
-pub fn all<P: AsRef<Path>>(optional_path: Option<P>) -> String {
-    match optional_path.and_then(|path| File::open(&path).ok()) {
-        None => whole_stream(&mut io::stdin()),
-        Some(mut file) => whole_stream(&mut file),
-    }
-}
-
-#[allow(unused)]
-fn next_line<T: BufRead>(reader: &mut T) -> Option<String> {
-    let mut buf = String::new();
-    match reader.read_line(&mut buf) {
-        Ok(0) | Err(_) => None,
-        Ok(_) => Some(buf),
-    }
-}
-
-#[allow(unused)]
-fn whole_stream<T: Read>(reader: &mut T) -> String {
-    let mut buf = String::new();
-    reader.read_to_string(&mut buf);
-    buf
+/// Creates an input handle based on standard in.
+pub fn from_stdin() -> FromStdin {
+    FromStdin::default()
 }
