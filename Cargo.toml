@@ -10,4 +10,4 @@ license = "MIT/Apache-2.0"
 keywords = ["stdin", "file", "read", "input", "simple"]
 
 [dependencies]
-clippy = {version = "*", optional = true}
+clippy = {version = "0.0.90", optional = true}
