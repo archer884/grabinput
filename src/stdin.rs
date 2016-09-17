@@ -31,5 +31,5 @@ impl Iterator for FromStdin {
 
     fn next(&mut self) -> Option<Self::Item> {
         read::next_line(&mut self.0)
-    } 
+    }
 }

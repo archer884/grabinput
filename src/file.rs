@@ -5,12 +5,12 @@ use std::path::Path;
 
 /// `FromFile` provides a convenient wrapper for an optional file.
 ///
-/// `FromFile` provides an iterator over lines found in the file or, 
-/// alternatively, a method providing access to the whole stream as a single 
+/// `FromFile` provides an iterator over lines found in the file or,
+/// alternatively, a method providing access to the whole stream as a single
 /// string.
 ///
-/// Additionally, it is possible to convert to an object providing access to 
-/// an optional file or to standard in as a backup. 
+/// Additionally, it is possible to convert to an object providing access to
+/// an optional file or to standard in as a backup.
 #[derive(Default)]
 pub struct FromFile {
     file: Option<BufReader<File>>,
@@ -24,8 +24,8 @@ impl FromFile {
 
     /// Creates a new FromFile struct based on the provided path.
     ///
-    /// If the provided path cannot be opened for reading, the FromFile struct 
-    /// will be created without any file handle and will return an empty string 
+    /// If the provided path cannot be opened for reading, the FromFile struct
+    /// will be created without any file handle and will return an empty string
     /// read or iterated.
     pub fn from_path<T: AsRef<Path>>(path: T) -> FromFile {
         FromFile { file: File::open(path).ok().map(|f| BufReader::new(f)) }
@@ -51,11 +51,11 @@ impl FromFile {
 /// `WithFallBack` wraps an optional file stream and standard input stream.
 ///
 /// WithFallback provides an iterator over lines found in the input streams
-/// or, alternatively, a method providing access to the whole stream as a 
+/// or, alternatively, a method providing access to the whole stream as a
 /// single string.
 ///
-/// Fallback behavior is such that standard input will not be opened unless 
-/// the provided file cannot be opened. Additionally, only one of the two 
+/// Fallback behavior is such that standard input will not be opened unless
+/// the provided file cannot be opened. Additionally, only one of the two
 /// streams will ever be used.
 pub struct WithFallback {
     file: Option<BufReader<File>>,
