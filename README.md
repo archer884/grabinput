@@ -11,9 +11,11 @@ Add `grabinput = "*"` to your cargo dependencies.
 ## Usage
 This library really is intended to be dirt simple. It doesn't do much--just allows you to skip some typing when you want to read something. Like, say you want to write a program to add up all the integers in a file...
 
-    let n: i32 = grabinput::from_args().with_fallback()
-        .filter_map(|n| n.trim().parse::<i32>().ok())
-        .sum();
+```rust
+let n: i32 = grabinput::from_args().with_fallback()
+    .filter_map(|n| n.trim().parse::<i32>().ok())
+    .sum();
+```
 
 That's your whole program now. I thought about having the library trim newlines from the end of each line, because .NET's similar library functions will do that, but I guess I just figured it was faster to let the user decide--no reason to make them pay for the work if they don't care if it's done or not, right? Anyway...
 
