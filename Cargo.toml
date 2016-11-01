@@ -1,6 +1,6 @@
 [package]
 name = "grabinput"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["J/A <archer884@gmail.com>"]
 exclude = ["examples/*"]
 description = "Unixy lib for reading from a file or from stdin"
@@ -10,4 +10,4 @@ license = "MIT/Apache-2.0"
 keywords = ["stdin", "file", "read", "input", "simple"]
 
 [dependencies]
-clippy = {version = "0.0.90", optional = true}
+clippy = {version = "0.0", optional = true}

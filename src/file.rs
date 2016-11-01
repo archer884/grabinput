@@ -28,7 +28,7 @@ impl FromFile {
     /// will be created without any file handle and will return an empty string
     /// read or iterated.
     pub fn from_path<T: AsRef<Path>>(path: T) -> FromFile {
-        FromFile { file: File::open(path).ok().map(|f| BufReader::new(f)) }
+        FromFile { file: File::open(path).ok().map(BufReader::new) }
     }
 
     /// Creates a new WithFallback struct based on the FromFile struct.
@@ -50,7 +50,7 @@ impl FromFile {
 
 /// `WithFallBack` wraps an optional file stream and standard input stream.
 ///
-/// WithFallback provides an iterator over lines found in the input streams
+/// `WithFallback` provides an iterator over lines found in the input streams
 /// or, alternatively, a method providing access to the whole stream as a
 /// single string.
 ///
@@ -69,11 +69,16 @@ impl WithFallback {
             return read::whole_stream(file);
         }
 
+        // This case is going to be very rare, as far as I can tell, but
+        // I figure I might as well check for it in case someone wants it.
         if let Some(ref mut stdin) = self.stdin {
             return read::whole_stream(stdin);
         }
 
-        String::new()
+        let mut stdin = BufReader::new(io::stdin());
+        let ret = read::whole_stream(&mut stdin);
+        self.stdin = Some(stdin);
+        ret
     }
 }
 
