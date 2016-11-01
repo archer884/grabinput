@@ -37,8 +37,8 @@ pub use stdin::FromStdin;
 pub fn from_args() -> FromFile {
     std::env::args()
         .nth(1)
-        .map(|path| FromFile::from_path(path))
-        .unwrap_or_else(|| FromFile::new())
+        .map(FromFile::from_path)
+        .unwrap_or_else(FromFile::new)
 }
 
 /// Creates an input handle based on the provided path.
