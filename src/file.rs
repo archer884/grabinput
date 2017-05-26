@@ -111,3 +111,26 @@ impl Iterator for WithFallback {
         ret
     }
 }
+
+impl io::Read for FromFile {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        match self.file {
+            Some(ref mut file) => file.read(buf),
+            None => Ok(0),
+        }
+    }
+}
+
+impl io::Read for WithFallback {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        if let Some(ref mut file) = self.file {
+            return file.read(buf);
+        }
+
+        if let Some(ref mut stdin) = self.stdin {
+            return stdin.read(buf);
+        }
+
+        return Ok(0);
+    }
+}

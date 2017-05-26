@@ -33,3 +33,9 @@ impl Iterator for FromStdin {
         read::next_line(&mut self.0)
     }
 }
+
+impl io::Read for FromStdin {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        self.0.read(buf)
+    }
+}
