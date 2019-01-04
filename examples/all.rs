@@ -1,5 +1,3 @@
-extern crate grabinput;
-
 fn main() {
-    println!("{}", grabinput::from_stdin().all());
+    println!("{}", grabinput::stdin().all());
 }
