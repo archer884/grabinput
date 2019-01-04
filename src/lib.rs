@@ -1,6 +1,3 @@
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
-
 //! This library really is intended to be dirt simple. It doesn't do much--just
 //! allows you to skip some typing when you want to read something. Like, say
 //! you want to write a program to add up all the integers in a file...
