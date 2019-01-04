@@ -6,23 +6,30 @@ use std::path::{Path, PathBuf};
 
 type Lines = Box<Iterator<Item = String>>;
 
-pub fn args(n: usize) -> GrabberBuilder {
-    GrabberBuilder::args(n)
+/// Constructs a grabber that will check the given command line argument for 
+/// a path to read from.
+pub fn args(n: usize) -> Grabber {
+    Grabber::args(n)
 }
 
-pub fn default() -> GrabberBuilder {
-    GrabberBuilder::default()
+/// Constructs a grabber that will first check the first command line argument
+/// for a path to read from and then fall back to stdin.
+pub fn default() -> Grabber {
+    Grabber::default()
 }
 
-pub fn file(path: impl Into<PathBuf>) -> GrabberBuilder {
-    GrabberBuilder::file(path)
+/// Constructs a grabber that will attempt to read from the provided path.
+pub fn file(path: impl Into<PathBuf>) -> Grabber {
+    Grabber::file(path)
 }
 
-pub fn stdin() -> GrabberBuilder {
-    GrabberBuilder::stdin()
+/// Constructs a grabber that will read from stdin.
+pub fn stdin() -> Grabber {
+    Grabber::stdin()
 }
 
-pub struct GrabberBuilder {
+/// Represents the primary and optional fallback strategy for reading input.
+pub struct Grabber {
     mode: GrabberMode,
     fallback_mode: Option<GrabberMode>,
 }
@@ -33,36 +40,37 @@ enum GrabberMode {
     Stdin,
 }
 
-impl GrabberBuilder {
-    fn new() -> GrabberBuilder {
-        GrabberBuilder {
+impl Grabber {
+    fn new() -> Grabber {
+        Grabber {
             mode: GrabberMode::Args(1),
             fallback_mode: Some(GrabberMode::Stdin),
         }
     }
 
-    fn args(n: usize) -> GrabberBuilder {
-        GrabberBuilder {
+    fn args(n: usize) -> Grabber {
+        Grabber {
             mode: GrabberMode::Args(n),
             fallback_mode: None,
         }
     }
 
-    fn file(path: impl Into<PathBuf>) -> GrabberBuilder {
-        GrabberBuilder {
+    fn file(path: impl Into<PathBuf>) -> Grabber {
+        Grabber {
             mode: GrabberMode::File(path.into()),
             fallback_mode: None,
         }
     }
 
-    fn stdin() -> GrabberBuilder {
-        GrabberBuilder {
+    fn stdin() -> Grabber {
+        Grabber {
             mode: GrabberMode::Stdin,
             fallback_mode: None,
         }
     }
 
-    pub fn or_stdin(mut self) -> GrabberBuilder {
+    /// Adds stdin as a fallback method.
+    pub fn or_stdin(mut self) -> Grabber {
         match self.mode {
             // Cannot apply fallback of stdin to stdin.
             GrabberMode::Stdin => self,
@@ -168,7 +176,7 @@ impl GrabberBuilder {
     }
 }
 
-impl Default for GrabberBuilder {
+impl Default for Grabber {
     fn default() -> Self {
         Self::new()
     }
